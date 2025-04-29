@@ -4,6 +4,8 @@ import { mergeStyles } from "../styles/utils";
 import howItWorksStyles, {
   howItWorksMediaStyles,
 } from "../styles/sections/howItWorksSection";
+import { useTranslation } from "react-i18next";
+import { typography } from "../styles/appStyles";
 
 // Importando novos mockups
 import mockupOnboarding from "../assets/images/mockup-onboarding.png";
@@ -18,62 +20,37 @@ import mockupProgress from "../assets/images/mockup-progress.png";
 import mockupGrafico from "../assets/images/mockup-grafico.png";
 
 // Dados dos passos do storytelling
-const storySteps = [
-  {
-    title: "Responda um breve questionário",
-    mockupSrc: mockupOnboarding,
-  },
-  {
-    title: "Receba seu plano personalizado",
-    mockupSrc: mockupSummary,
-  },
-  {
-    title: "Organize suas refeições",
-    mockupSrc: mockupMeals,
-  },
-  {
-    title: "Veja informaçoes nutricionais de cada alimento",
-    mockupSrc: mockupFood,
-  },
-  {
-    title: "Altere sua configuração de dieta quando quiser",
-    mockupSrc: mockupPlan,
-  },
-  {
-    title: "Crie seus treinos personalizados",
-    mockupSrc: mockupWorkout,
-  },
-  {
-    title: "Explore um grande banco de exercicios",
-    mockupSrc: mockupExercices,
-  },
-  {
-    title: "Registre suas cargas, séries e repetições",
-    mockupSrc: mockupReps,
-  },
-  {
-    title: "Acompanhe seu progresso",
-    mockupSrc: mockupProgress,
-  },
-  {
-    title: "Analise seus resultados",
-    mockupSrc: mockupGrafico,
-  },
+const storyStepsMockups = [
+  mockupOnboarding,
+  mockupSummary,
+  mockupMeals,
+  mockupFood,
+  mockupPlan,
+  mockupWorkout,
+  mockupExercices,
+  mockupReps,
+  mockupProgress,
+  mockupGrafico,
 ];
 
 const HowItWorksSection: React.FC = () => {
+  const { t } = useTranslation();
   const [activeStep, setActiveStep] = useState(0);
   const [isSectionVisible, setIsSectionVisible] = useState(false);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [touchEndX, setTouchEndX] = useState<number | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const [direction, setDirection] = useState<"next" | "prev" | null>(null);
+  const [isDesktop, setIsDesktop] = useState(false);
 
   // Estados para controle de animações
   const [hasAnimated, setHasAnimated] = useState(false);
   const [animateTitle, setAnimateTitle] = useState(false);
   const [animateCarousel, setAnimateCarousel] = useState(false);
   const [animateControls, setAnimateControls] = useState(false);
+
+  // Adicionando verificação para tela extra grande
+  const [isExtraLarge, setIsExtraLarge] = useState(false);
 
   // Refs
   const sectionRef = useRef<HTMLElement>(null);
@@ -85,16 +62,51 @@ const HowItWorksSection: React.FC = () => {
   // Pré-carregar todas as imagens quando o componente montar
   useEffect(() => {
     // Criar elementos de imagem para cada mockup e pré-carregá-los
-    storySteps.forEach((step, index) => {
+    const storySteps = t("howItWorks.steps", { returnObjects: true }) as {
+      title: string;
+    }[];
+    storySteps.forEach((_, index) => {
       const img = new Image();
-      img.src = step.mockupSrc;
+      img.src = storyStepsMockups[index];
       preloadedImagesRef.current[index] = img;
     });
+  }, [t]);
+
+  // Verificar se estamos em um desktop
+  useEffect(() => {
+    const checkIsDesktop = () => {
+      setIsDesktop(window.innerWidth >= 1024); // considerando 1024px como ponto de quebra para desktop
+    };
+
+    checkIsDesktop();
+    window.addEventListener("resize", checkIsDesktop);
+
+    return () => {
+      window.removeEventListener("resize", checkIsDesktop);
+    };
+  }, []);
+
+  // Adicionando verificação para tela extra grande
+  useEffect(() => {
+    const checkIsExtraLarge = () => {
+      setIsExtraLarge(window.innerWidth >= 1440); // considerando 1440px como ponto de quebra para telas extra grandes
+    };
+
+    checkIsExtraLarge();
+    window.addEventListener("resize", checkIsExtraLarge);
+
+    return () => {
+      window.removeEventListener("resize", checkIsExtraLarge);
+    };
   }, []);
 
   // Navegar para o próximo slide
   const nextSlide = () => {
     if (isAnimating) return;
+
+    const storySteps = t("howItWorks.steps", { returnObjects: true }) as {
+      title: string;
+    }[];
 
     if (activeStep < storySteps.length - 1) {
       setIsAnimating(true);
@@ -208,6 +220,10 @@ const HowItWorksSection: React.FC = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isSectionVisible) return;
 
+      const storySteps = t("howItWorks.steps", { returnObjects: true }) as {
+        title: string;
+      }[];
+
       switch (e.key) {
         case "ArrowRight":
           nextSlide();
@@ -247,7 +263,7 @@ const HowItWorksSection: React.FC = () => {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activeStep, isSectionVisible]);
+  }, [activeStep, isSectionVisible, t]);
 
   // Obter estilos responsivos
   const sectionStyle = useResponsiveStyles(
@@ -255,10 +271,16 @@ const HowItWorksSection: React.FC = () => {
     howItWorksMediaStyles,
     "section"
   );
-  const titleStyle = useResponsiveStyles(
-    howItWorksStyles,
-    howItWorksMediaStyles,
-    "title"
+  const titleStyle = mergeStyles(
+    useResponsiveStyles(howItWorksStyles, howItWorksMediaStyles, "title"),
+    {
+      fontFamily: typography.titleFontFamily,
+      textTransform: "uppercase",
+      letterSpacing: "0.01em",
+      whiteSpace: isDesktop ? "nowrap" : "normal",
+      maxWidth: isDesktop ? "100%" : undefined,
+      padding: isDesktop ? "0 20px" : undefined,
+    }
   );
   const contentStyle = useResponsiveStyles(
     howItWorksStyles,
@@ -270,10 +292,9 @@ const HowItWorksSection: React.FC = () => {
     howItWorksMediaStyles,
     "mockupSection"
   );
-  const mockupImageStyle = useResponsiveStyles(
-    howItWorksStyles,
-    howItWorksMediaStyles,
-    "mockupImage"
+  const mockupImageStyle = mergeStyles(
+    useResponsiveStyles(howItWorksStyles, howItWorksMediaStyles, "mockupImage"),
+    isExtraLarge ? { maxWidth: "380px" } : {}
   );
   const stepTitleStyle = useResponsiveStyles(
     howItWorksStyles,
@@ -335,6 +356,9 @@ const HowItWorksSection: React.FC = () => {
 
   // Renderiza apenas o slide ativo com animação de transição
   const renderActiveSlideOnly = () => {
+    const storySteps = t("howItWorks.steps", { returnObjects: true }) as {
+      title: string;
+    }[];
     const activeSlide = storySteps[activeStep];
 
     // Animação baseada na direção
@@ -354,7 +378,7 @@ const HowItWorksSection: React.FC = () => {
       >
         <div style={mockupSectionStyle}>
           <img
-            src={activeSlide.mockupSrc}
+            src={storyStepsMockups[activeStep]}
             alt={activeSlide.title}
             style={mergeStyles(mockupImageStyle, {
               filter: "none",
@@ -375,6 +399,10 @@ const HowItWorksSection: React.FC = () => {
     );
   };
 
+  const storySteps = t("howItWorks.steps", { returnObjects: true }) as {
+    title: string;
+  }[];
+
   return (
     <section ref={sectionRef} style={sectionStyle}>
       {/* Título animado com fade-in */}
@@ -385,7 +413,7 @@ const HowItWorksSection: React.FC = () => {
           animateTitle ? fadeInActiveStyle : {}
         )}
       >
-        Como Funciona
+        {t("howItWorks.title")}
       </h2>
 
       {/* Carousel */}

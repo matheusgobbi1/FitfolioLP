@@ -1,0 +1,111 @@
+{
+  "navbar": {
+    "home": "Home",
+    "features": "Recursos",
+    "howItWorks": "Como Funciona",
+    "about": "Sugestão",
+    "contact": "Sobre"
+  },
+  "hero": {
+    "title": "Fitfolio te ajuda a",
+    "subtitle": "Acompanhe cada treino, monitore sua dieta, mantenha a consistência e veja resultados reais. De graça.",
+    "ctaButton": "Começar"
+  },
+  "valueProposition": {
+    "title": "Transforme seu corpo com o poder dos dados",
+    "description": "O Fitfolio oferece todas as ferramentas que você precisa para alcançar seus objetivos fitness, sem custos.",
+    "feature1": {
+      "title": "Dieta Personalizada",
+      "description": "Receba um plano alimentar personalizado baseado no seu perfil, objetivos e preferências."
+    },
+    "feature2": {
+      "title": "Treinos Customizados",
+      "description": "Crie e monitore seus treinos, acompanhando a progressão de carga e volume ao longo do tempo."
+    },
+    "feature3": {
+      "title": "Análise de Progresso",
+      "description": "Visualize seu progresso com gráficos detalhados de dieta e treino para manter-se motivado."
+    }
+  },
+  "waitlist": {
+    "title": "Quer testar o FitFolio antes do lançamento oficial?",
+    "description": "Entre para o teste beta, enviaremos o link para você.",
+    "emailPlaceholder": "Seu endereço de email",
+    "sending": "Enviando...",
+    "joinButton": "Entrar",
+    "join": "Entrar na lista de espera",
+    "invalidEmail": "Por favor, insira um email válido.",
+    "error": "Algo deu errado. Por favor, tente novamente."
+  },
+  "howItWorks": {
+    "title": "Como Funciona",
+    "steps": [
+      {
+        "title": "Responda um breve questionário"
+      },
+      {
+        "title": "Receba seu plano personalizado"
+      },
+      {
+        "title": "Organize suas refeições"
+      },
+      {
+        "title": "Veja informaçoes nutricionais de cada alimento"
+      },
+      {
+        "title": "Altere sua configuração de dieta quando quiser"
+      },
+      {
+        "title": "Crie seus treinos personalizados"
+      },
+      {
+        "title": "Explore um grande banco de exercicios"
+      },
+      {
+        "title": "Registre suas cargas, séries e repetições"
+      },
+      {
+        "title": "Acompanhe seu progresso"
+      },
+      {
+        "title": "Analise seus resultados"
+      }
+    ]
+  },
+  "cta": {
+    "title": "Ajude a construir o Fitfolio",
+    "description": "Queremos que todos vivam vidas saudáveis e em forma. Gostaria que você nos contasse o que podemos fazer para ajudá-lo a atingir seus objetivos.",
+    "button": "Enviar sugestão",
+    "modal": {
+      "title": "Ajude a construir o Fitfolio",
+      "email": "Seu email:",
+      "suggestion": "Sua sugestão:",
+      "placeholder": "Conte-nos o que podemos construir para ajudá-lo a atingir seus objetivos...",
+      "button": "Enviar sugestão",
+      "success": "Obrigado pela sua sugestão!",
+      "successMessage": "Sua contribuição é muito importante para nós."
+    }
+  },
+  "footer": {
+    "description": "Acompanhe cada treino, monitore sua dieta e seus macros, mantenha a consistência e veja resultados reais. Transforme sua jornada para uma vida mais saudável com o Fitfolio.",
+    "newsletter": {
+      "title": "Entre para o teste beta",
+      "description": "Teste o FitFolio antes do lançamento oficial.",
+      "placeholder": "Seu melhor e-mail",
+      "button": "Inscrever-se",
+      "loading": "Enviando...",
+      "success": "Obrigado por se inscrever! Você receberá nossas novidades."
+    },
+    "nav": {
+      "features": "Recursos",
+      "contact": "Contato",
+      "privacy": "Política de Privacidade",
+      "terms": "Termos de Uso"
+    },
+    "copyright": "© 2024 Fitfolio. Todos os direitos reservados.",
+    "backToTop": "Voltar ao topo"
+  },
+  "languageSelector": {
+    "language": "Idioma"
+  }
+} 

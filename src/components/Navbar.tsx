@@ -5,7 +5,9 @@ import { mergeStyles } from "../styles/utils";
 import { useResponsiveStyles } from "../hooks/useResponsiveStyles";
 import logoImage from "../assets/images/fitfolio-icon.png";
 import { useNavbarVisibility } from "../hooks/useNavbarVisibility";
-import { typography } from "../styles/appStyles";
+import { typography, colors, spacing } from "../styles/appStyles";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const Navbar: React.FC = () => {
   // Estados principais
@@ -20,6 +22,8 @@ const Navbar: React.FC = () => {
     cta: false,
     mobileCta: false,
   });
+
+  const { t } = useTranslation();
 
   // Usar hook customizado para controlar visibilidade da navbar
   const { isScrolled, isHidden, isMobile } =
@@ -49,11 +53,6 @@ const Navbar: React.FC = () => {
     navbarMediaStyles,
     "navbarVisible"
   );
-  const navbarMobileToggleStyle = useResponsiveStyles(
-    navbarStyles,
-    navbarMediaStyles,
-    "navbarMobileToggle"
-  );
   const navbarFloatingLinksContainerStyle = useResponsiveStyles(
     navbarStyles,
     navbarMediaStyles,
@@ -64,13 +63,6 @@ const Navbar: React.FC = () => {
     navbarMediaStyles,
     "navbarLogo"
   );
-
-  // Alternar entre abrir e fechar o menu mobile
-  const toggleMobileMenu = () => {
-    // Impedir scroll quando o menu está aberto
-    document.body.style.overflow = isMobileMenuOpen ? "" : "hidden";
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
 
   // Manipular o hover nos links
   const handleMouseEnter = (link: keyof typeof hoverStates) => {
@@ -137,23 +129,6 @@ const Navbar: React.FC = () => {
       : navbarStyles.navbarCTA;
   };
 
-  // Obter estilo do ícone CTA
-  const getCTAIconStyle = () => {
-    return hoverStates.cta
-      ? mergeStyles(navbarStyles.navbarCTAIcon, navbarStyles.navbarCTAIconHover)
-      : navbarStyles.navbarCTAIcon;
-  };
-
-  // Obter estilo do menu mobile
-  const getMobileMenuStyle = () => {
-    return isMobileMenuOpen
-      ? mergeStyles(
-          navbarStyles.navbarMobileMenu,
-          navbarStyles.navbarMobileMenuOpen
-        )
-      : navbarStyles.navbarMobileMenu;
-  };
-
   // Obter estilo do link mobile
   const getMobileLinkStyle = (link: string) => {
     const isActive = activeLink === link;
@@ -166,31 +141,39 @@ const Navbar: React.FC = () => {
       : navbarStyles.navbarMobileLink;
   };
 
-  // Obter estilo do botão CTA mobile
-  const getMobileCTAStyle = () => {
-    return hoverStates.mobileCta
-      ? mergeStyles(
-          navbarStyles.navbarMobileCTA,
-          navbarStyles.navbarMobileCTAHover
-        )
-      : navbarStyles.navbarMobileCTA;
-  };
-
   // Calcular os estilos da navbar com base nos estados
-  const getNavbarStyles = () => {
+  const getNavbarStyles = (): React.CSSProperties => {
+    let finalStyle: React.CSSProperties;
     if (isScrolled && isHidden && !isMobileMenuOpen) {
-      return mergeStyles(navbarStyle, navbarScrolledStyle, navbarHiddenStyle);
+      finalStyle = mergeStyles(
+        navbarStyle,
+        navbarScrolledStyle,
+        navbarHiddenStyle
+      );
+    } else if (isScrolled) {
+      finalStyle = mergeStyles(
+        navbarStyle,
+        navbarScrolledStyle,
+        navbarVisibleStyle
+      );
+    } else if (isHidden && !isMobileMenuOpen) {
+      finalStyle = mergeStyles(navbarStyle, navbarHiddenStyle);
+    } else {
+      finalStyle = mergeStyles(navbarStyle, navbarVisibleStyle);
     }
-
-    if (isScrolled) {
-      return mergeStyles(navbarStyle, navbarScrolledStyle, navbarVisibleStyle);
-    }
-
-    if (isHidden && !isMobileMenuOpen) {
-      return mergeStyles(navbarStyle, navbarHiddenStyle);
-    }
-
-    return mergeStyles(navbarStyle, navbarVisibleStyle);
+    console.log(
+      "[Navbar] isHidden:",
+      isHidden,
+      "isScrolled:",
+      isScrolled,
+      "isMobileMenuOpen:",
+      isMobileMenuOpen,
+      "isMobile:",
+      isMobile,
+      "Final Style:",
+      finalStyle
+    );
+    return finalStyle;
   };
 
   // Componente de logo
@@ -199,17 +182,23 @@ const Navbar: React.FC = () => {
       <img
         src={logoImage}
         alt="FitFolio Logo"
-        width={35}
-        height={35}
-        style={{ marginRight: "8px" }}
+        width={45}
+        height={45}
+        style={{ marginRight: "10px" }}
       />
       <span
         style={{
           ...navbarStyles.navbarLogoText,
+          fontFamily: typography.serifFontFamily,
           fontWeight: typography.fontWeights.bold,
-          letterSpacing: "0.05em",
-          fontSize: isMobile ? "1rem" : "1.25rem",
+          letterSpacing: "0.03em",
+          fontSize: isMobile ? "1.25rem" : "1.5rem",
           color: "#000",
+          textDecoration: "none",
+          borderBottom: "none",
+          border: "none",
+          outline: "none",
+          boxShadow: "none",
         }}
       >
         FITFOLIO
@@ -229,6 +218,9 @@ const Navbar: React.FC = () => {
           <LogoComponent />
         </a>
       )}
+
+      {/* Seletor de idioma minimalista no desktop */}
+      {!isMobile && <LanguageSwitcher isMinimal={true} />}
 
       {/* Navbar */}
       <nav ref={navbarRef} style={getNavbarStyles()}>
@@ -253,7 +245,7 @@ const Navbar: React.FC = () => {
               onMouseLeave={() => handleMouseLeave("home")}
               onClick={() => handleLinkClick("home")}
             >
-              Home
+              {t("navbar.home")}
             </a>
 
             <a
@@ -263,7 +255,7 @@ const Navbar: React.FC = () => {
               onMouseLeave={() => handleMouseLeave("recursos")}
               onClick={() => handleLinkClick("recursos")}
             >
-              Recursos
+              {t("navbar.features")}
             </a>
 
             <a
@@ -273,7 +265,7 @@ const Navbar: React.FC = () => {
               onMouseLeave={() => handleMouseLeave("como")}
               onClick={() => handleLinkClick("como")}
             >
-              Como
+              {t("navbar.howItWorks")}
             </a>
 
             <a
@@ -283,7 +275,17 @@ const Navbar: React.FC = () => {
               onMouseLeave={() => handleMouseLeave("sugestao")}
               onClick={() => handleLinkClick("sugestao")}
             >
-              Sugestão
+              {t("navbar.about")}
+            </a>
+
+            <a
+              href="#cta"
+              style={getLinkStyle("sobre")}
+              onMouseEnter={() => handleMouseEnter("sobre")}
+              onMouseLeave={() => handleMouseLeave("sobre")}
+              onClick={() => handleLinkClick("sobre")}
+            >
+              {t("navbar.contact")}
             </a>
 
             <button
@@ -292,47 +294,97 @@ const Navbar: React.FC = () => {
               onMouseLeave={() => handleMouseLeave("cta")}
               onClick={() => handleLinkClick("cta")}
             >
-              Começar
-              <ChevronRight size={14} style={getCTAIconStyle()} />
+              {t("hero.ctaButton")}
             </button>
           </div>
         )}
-
-        {/* Botão do menu mobile */}
-        {isMobile && !isMobileMenuOpen && (
-          <button
-            style={navbarMobileToggleStyle}
-            onClick={toggleMobileMenu}
-            aria-label="Abrir menu"
-          >
-            <Menu size={20} />
-          </button>
-        )}
       </nav>
 
-      {/* Botão X para fechar o menu (fixo na tela quando menu aberto) */}
-      {isMobile && isMobileMenuOpen && (
+      {/* Botão toggle para exibir menu em dispositivos móveis (agora fora do <nav>) */}
+      {isMobile && (
         <button
-          style={mergeStyles(
-            navbarMobileToggleStyle,
-            navbarStyles.navbarMobileToggleActive
-          )}
-          onClick={toggleMobileMenu}
-          aria-label="Fechar menu"
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            background: isMobileMenuOpen ? "#ffffff" : "transparent",
+            border: "none",
+            color: colors.primary,
+            cursor: "pointer",
+            padding: spacing.sm,
+            borderRadius: "50%",
+            width: "40px",
+            height: "40px",
+            position: "fixed", // Sempre fixo agora, posição controlada pelos ternários abaixo
+            top: "10px", // Posição quando menu está aberto ou fechado
+            right: "20px", // Posição quando menu está aberto ou fechado
+            zIndex: 1500, // Garante que fique acima de tudo
+            boxShadow: isMobileMenuOpen
+              ? "0 2px 8px rgba(0, 0, 0, 0.1)"
+              : "none", // Sombra só quando aberto
+            transition:
+              "background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease-in-out, opacity 0.3s ease-in-out", // Adicionada transição para transform e opacity
+            // Aplicar a mesma lógica de transformação e visibilidade que a navbar
+            transform:
+              isHidden && !isMobileMenuOpen
+                ? "translateY(-100%)"
+                : "translateY(0)",
+            opacity: isHidden && !isMobileMenuOpen ? 0 : 1,
+            pointerEvents: isHidden && !isMobileMenuOpen ? "none" : "auto",
+          }}
+          onClick={() => {
+            setIsMobileMenuOpen(!isMobileMenuOpen);
+            document.body.style.overflow = !isMobileMenuOpen ? "hidden" : "";
+          }}
+          aria-label="Toggle menu"
         >
-          <X size={20} />
+          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       )}
 
-      {/* Menu Mobile */}
-      <div style={getMobileMenuStyle()}>
-        <div style={navbarStyles.navbarMobileContent}>
+      {/* Menu para dispositivos móveis */}
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "rgba(255, 255, 255, 0.98)",
+          backdropFilter: "blur(10px)",
+          WebkitBackdropFilter: "blur(10px)",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          opacity: isMobileMenuOpen ? 1 : 0,
+          pointerEvents: isMobileMenuOpen ? "auto" : "none",
+          transform: isMobileMenuOpen ? "translateY(0)" : "translateY(30px)",
+          transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+          zIndex: 1005,
+          overflowY: "auto",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: spacing.xl,
+            padding: spacing["2xl"],
+            paddingTop: "80px",
+            width: "100%",
+            maxWidth: "500px",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            height: "100%",
+          }}
+        >
           <a
             href="#home"
             style={getMobileLinkStyle("home")}
             onClick={() => handleLinkClick("home")}
           >
-            Home
+            {t("navbar.home")}
           </a>
 
           <a
@@ -340,7 +392,7 @@ const Navbar: React.FC = () => {
             style={getMobileLinkStyle("recursos")}
             onClick={() => handleLinkClick("recursos")}
           >
-            Recursos
+            {t("navbar.features")}
           </a>
 
           <a
@@ -348,7 +400,7 @@ const Navbar: React.FC = () => {
             style={getMobileLinkStyle("como")}
             onClick={() => handleLinkClick("como")}
           >
-            Como Usar
+            {t("navbar.howItWorks")}
           </a>
 
           <a
@@ -356,7 +408,7 @@ const Navbar: React.FC = () => {
             style={getMobileLinkStyle("sugestao")}
             onClick={() => handleLinkClick("sugestao")}
           >
-            Sugestão
+            {t("navbar.about")}
           </a>
 
           <a
@@ -364,16 +416,40 @@ const Navbar: React.FC = () => {
             style={getMobileLinkStyle("sobre")}
             onClick={() => handleLinkClick("sobre")}
           >
-            Sobre
+            {t("navbar.contact")}
           </a>
 
+          <LanguageSwitcher />
+
           <button
-            style={getMobileCTAStyle()}
+            style={{
+              backgroundColor: colors.primary,
+              color: colors.light,
+              border: "none",
+              borderRadius: "25px",
+              padding: `${spacing.md} ${spacing.lg}`,
+              fontSize: typography.fontSizes.lg,
+              fontWeight: typography.fontWeights.semibold,
+              cursor: "pointer",
+              transition: "all 0.3s ease",
+              width: "80%",
+              maxWidth: "300px",
+              marginTop: spacing.lg,
+              marginBottom: "100px", // Espaço extra para o botão não ficar coberto
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: spacing.sm,
+              boxShadow: "0 4px 15px rgba(0, 0, 0, 0.15)",
+              letterSpacing: "0.05em",
+              position: "relative",
+              zIndex: 1006,
+            }}
             onMouseEnter={() => handleMouseEnter("mobileCta")}
             onMouseLeave={() => handleMouseLeave("mobileCta")}
             onClick={() => handleLinkClick("cta")}
           >
-            Começar <ChevronRight size={16} />
+            {t("hero.ctaButton")} <ChevronRight size={16} />
           </button>
         </div>
       </div>

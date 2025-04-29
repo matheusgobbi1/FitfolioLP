@@ -33,7 +33,7 @@ if (typeof document !== "undefined") {
 
 export const navbarStyles: Record<string, CSSProperties> = {
   navbar: {
-    position: "fixed",
+    position: "fixed" as const,
     top: 0,
     left: 0,
     width: "100%",
@@ -63,7 +63,7 @@ export const navbarStyles: Record<string, CSSProperties> = {
   navbarHidden: {
     transform: "translateY(-100%)",
     opacity: 0,
-    pointerEvents: "none",
+    pointerEvents: "none" as const,
     transition: "transform 0.3s ease-in-out, opacity 0.3s ease-in-out",
   },
 
@@ -75,7 +75,7 @@ export const navbarStyles: Record<string, CSSProperties> = {
   },
 
   navbarLogo: {
-    position: "fixed",
+    position: "fixed" as const,
     top: spacing.lg,
     left: spacing.xl,
     zIndex: 1001,
@@ -88,24 +88,31 @@ export const navbarStyles: Record<string, CSSProperties> = {
     alignItems: "center",
     gap: spacing.sm,
     transition: "all 0.3s ease",
-    backgroundColor: "rgba(255, 255, 255, 0.7)",
-    backdropFilter: "blur(10px)",
-    WebkitBackdropFilter: "blur(10px)",
+    backgroundColor: "transparent",
+    backdropFilter: "none",
+    WebkitBackdropFilter: "none",
     padding: `${spacing.xs} ${spacing.md}`,
     borderRadius: "25px",
-    boxShadow: "0 2px 10px rgba(0, 0, 0, 0.08)",
+    boxShadow: "none",
   },
 
   navbarLogoText: {
     display: "inline-block",
     position: "relative",
     color: "#000",
+    textDecoration: "none",
+    borderBottom: "none",
+    borderColor: "transparent",
+    border: "none",
   },
 
   navbarLogoHighlight: {
     position: "relative",
     color: "#000",
     borderBottom: "none",
+    borderColor: "transparent",
+    border: "none",
+    textDecoration: "none",
   },
 
   navbarLinks: {
@@ -124,7 +131,7 @@ export const navbarStyles: Record<string, CSSProperties> = {
     padding: `${spacing.xs} ${spacing.sm}`,
     borderRadius: "20px",
     transition: "all 0.3s ease",
-    position: "relative",
+    position: "relative" as const,
     opacity: 0.7,
   },
 
@@ -141,7 +148,7 @@ export const navbarStyles: Record<string, CSSProperties> = {
   },
 
   navbarLinkIndicator: {
-    position: "absolute",
+    position: "absolute" as const,
     bottom: "-2px",
     left: "0",
     width: "100%",
@@ -195,7 +202,7 @@ export const navbarStyles: Record<string, CSSProperties> = {
     cursor: "pointer",
     padding: spacing.sm,
     transition: "all 0.3s ease",
-    position: "relative",
+    position: "relative" as const,
     width: "40px",
     height: "40px",
     alignItems: "center",
@@ -206,14 +213,13 @@ export const navbarStyles: Record<string, CSSProperties> = {
   },
 
   navbarMobileToggleActive: {
-    background: "transparent",
+    background: colors.light,
     color: colors.primary,
-    position: "fixed",
+    position: "fixed" as const,
     top: "10px",
     right: "20px",
     zIndex: 1010,
     boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
     borderRadius: "50%",
     width: "40px",
     height: "40px",
@@ -223,7 +229,7 @@ export const navbarStyles: Record<string, CSSProperties> = {
   },
 
   navbarMobileMenu: {
-    position: "fixed",
+    position: "fixed" as const,
     top: 0,
     left: 0,
     right: 0,
@@ -236,7 +242,7 @@ export const navbarStyles: Record<string, CSSProperties> = {
     justifyContent: "center",
     alignItems: "center",
     opacity: 0,
-    pointerEvents: "none",
+    pointerEvents: "none" as const,
     transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
     zIndex: 1005,
     transform: "translateY(30px)",
@@ -244,7 +250,7 @@ export const navbarStyles: Record<string, CSSProperties> = {
 
   navbarMobileMenuOpen: {
     opacity: 1,
-    pointerEvents: "auto",
+    pointerEvents: "auto" as const,
     transform: "translateY(0)",
   },
 
@@ -256,7 +262,10 @@ export const navbarStyles: Record<string, CSSProperties> = {
     width: "100%",
     maxWidth: "500px",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-start",
+    paddingTop: "80px",
+    height: "100%",
+    overflowY: "auto" as const,
   },
 
   navbarMobileLink: {
@@ -291,7 +300,8 @@ export const navbarStyles: Record<string, CSSProperties> = {
     transition: "all 0.3s ease",
     width: "80%",
     maxWidth: "300px",
-    marginTop: spacing["2xl"],
+    marginTop: spacing.lg,
+    marginBottom: "100px", // Espaço extra para o botão não ficar coberto pela barra do iPhone
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -299,6 +309,8 @@ export const navbarStyles: Record<string, CSSProperties> = {
     boxShadow: "0 4px 15px rgba(0, 0, 0, 0.15)",
     alignSelf: "center",
     letterSpacing: "0.05em",
+    position: "relative" as const,
+    zIndex: 1006,
   },
 
   navbarMobileCTAHover: {
@@ -338,7 +350,7 @@ export const navbarStyles: Record<string, CSSProperties> = {
   navbarMobileHidden: {
     transform: "translateY(-100%)",
     opacity: 0,
-    pointerEvents: "none",
+    pointerEvents: "none" as const,
     transition: "transform 0.3s ease-in-out, opacity 0.3s ease-in-out",
   },
 
@@ -362,7 +374,7 @@ export const navbarStyles: Record<string, CSSProperties> = {
     boxShadow: "none",
     padding: 0,
     borderRadius: 0,
-    position: "static",
+    position: "static" as const,
   },
 };
 
@@ -398,9 +410,9 @@ export const navbarMediaStyles = {
       top: "30px",
       left: "50%",
       transform: "translateX(-50%)",
-      padding: `${spacing.sm} ${spacing.lg}`,
+      padding: `${spacing.sm} ${spacing.md}`,
       width: "auto",
-      maxWidth: "450px",
+      maxWidth: "680px",
       borderRadius: "30px",
       justifyContent: "center",
       backgroundColor: "rgba(255, 255, 255, 0.2)",
@@ -408,7 +420,7 @@ export const navbarMediaStyles = {
     navbarHidden: {
       opacity: 0,
       transform: "translate(-50%, -100px)",
-      pointerEvents: "none",
+      pointerEvents: "none" as const,
       transition: "transform 0.3s ease-in-out, opacity 0.3s ease-in-out",
     },
     navbarVisible: {
@@ -418,13 +430,13 @@ export const navbarMediaStyles = {
         "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
     },
     navbarLogo: {
-      position: "fixed",
+      position: "fixed" as const,
       top: spacing.lg,
       left: spacing.xl,
-      backgroundColor: "rgba(255, 255, 255, 0.7)",
+      backgroundColor: "transparent",
       borderRadius: "25px",
       padding: `${spacing.xs} ${spacing.md}`,
-      boxShadow: "0 2px 10px rgba(0, 0, 0, 0.08)",
+      boxShadow: "none",
     },
     navbarFloatingLinksContainer: {
       display: "flex",
@@ -432,34 +444,34 @@ export const navbarMediaStyles = {
     },
     navbarLink: {
       fontSize: typography.fontSizes.xs,
-      padding: `${spacing.xs} ${spacing.sm}`,
+      padding: `${spacing.xs} ${spacing.xs}`,
     },
     navbarCTA: {
-      padding: `${spacing.xs} ${spacing.md}`,
+      padding: `${spacing.xs} ${spacing.sm}`,
       fontSize: typography.fontSizes.xs,
-      marginLeft: spacing.sm,
+      marginLeft: spacing.xs,
     },
   },
   lg: {
     navbarLinks: {
-      gap: spacing.md,
+      gap: spacing.sm,
     },
     navbar: {
-      padding: `${spacing.sm} ${spacing.lg}`,
-      minWidth: "400px",
-      maxWidth: "550px",
+      padding: `${spacing.sm} ${spacing.md}`,
+      minWidth: "610px",
+      maxWidth: "450px",
     },
     navbarFloatingLinksContainer: {
-      gap: spacing.md,
+      gap: spacing.sm,
     },
     navbarLink: {
       fontSize: typography.fontSizes.sm,
-      padding: `${spacing.xs} ${spacing.sm}`,
+      padding: `${spacing.xs} ${spacing.xs}`,
     },
     navbarCTA: {
-      padding: `${spacing.xs} ${spacing.lg}`,
+      padding: `${spacing.xs} ${spacing.md}`,
       fontSize: typography.fontSizes.sm,
-      marginLeft: spacing.md,
+      marginLeft: spacing.sm,
     },
   },
 };

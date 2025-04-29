@@ -168,48 +168,48 @@ const MockupDisplay: React.FC<MockupDisplayProps> = ({
 
   // Calcular os estilos de animação baseados no progresso do scroll
   const getMockup1AnimatedStyle = () => {
-    // Se estiver no carregamento inicial, usar valores mínimos
+    // Valores iniciais ajustados para serem mais visíveis
+    const initialDesktopScale = 0.5;
+    const initialDesktopTranslateY = 40;
+    const initialDesktopTranslateX = -80; // -95 + 15 (posição inicial quando progress=0)
+    const initialDesktopRotate = -7; // -10 + 3
+
+    // Se estiver no carregamento inicial, usar valores baseados no estado inicial desejado
     if (initialLoad) {
       return {
         opacity: 0.5,
-        transform: `translateX(-80%) rotate(-15deg) scale(0.15) translateY(60px)`,
+        // Usar os valores iniciais calculados para desktop como base
+        transform: `translateX(${initialDesktopTranslateX}%) rotate(${initialDesktopRotate}deg) scale(${initialDesktopScale}) translateY(${initialDesktopTranslateY}px)`,
         transition: "none",
-        boxShadow: "none", // Garantindo que não tenha sombra
+        boxShadow: "none",
       };
     }
 
-    // Opacidade alta para melhor visualização
     const opacity = isInView ? 0.9 + scrollProgress * 0.1 : 0.7;
-
-    let scale;
-    let translateY;
-    let translateX;
-    let rotate;
+    let scale, translateY, translateX, rotate;
 
     if (screenSize === "xs") {
-      // Telas muito pequenas (smartphones)
+      // Manter como estava ou ajustar proporcionalmente se necessário
       scale = 0.15 + scrollProgress * 0.6;
       translateY = 40 - scrollProgress * 35;
       translateX = -72 + scrollProgress * 10;
       rotate = -10 + scrollProgress * 4;
     } else if (screenSize === "sm") {
-      // Telas pequenas
       scale = 0.2 + scrollProgress * 0.6;
       translateY = 50 - scrollProgress * 45;
       translateX = -85 + scrollProgress * 15;
       rotate = -12 + scrollProgress * 5;
     } else if (screenSize === "md") {
-      // Tablet
       scale = 0.25 + scrollProgress * 0.65;
       translateY = 60 - scrollProgress * 50;
       translateX = -90 + scrollProgress * 15;
       rotate = -12 + scrollProgress * 4;
     } else {
-      // Desktop
-      scale = 0.3 + scrollProgress * 0.7;
-      translateY = 70 - scrollProgress * 55;
-      translateX = -95 + scrollProgress * 15;
-      rotate = -10 + scrollProgress * 3;
+      // Desktop - Ajustado para iniciar maior e mais alto
+      scale = initialDesktopScale + scrollProgress * 0.5; // Começa em 0.5, vai até 1.0
+      translateY = initialDesktopTranslateY - scrollProgress * 25; // Começa em 40, vai até 15
+      translateX = initialDesktopTranslateX + scrollProgress * 15; // Começa em -80, vai até -65
+      rotate = initialDesktopRotate + scrollProgress * 3; // Começa em -7, vai até -4
     }
 
     return {
@@ -217,53 +217,51 @@ const MockupDisplay: React.FC<MockupDisplayProps> = ({
       transform: `translateX(${translateX}%) rotate(${rotate}deg) scale(${scale}) translateY(${translateY}px)`,
       transition:
         "opacity 0.3s ease-out, transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1)",
-      boxShadow: "none", // Garantindo que não tenha sombra
+      boxShadow: "none",
     };
   };
 
   const getMockup2AnimatedStyle = () => {
-    // Se estiver no carregamento inicial, usar valores mínimos
+    // Valores iniciais ajustados para serem mais visíveis
+    const initialDesktopScale = 0.45;
+    const initialDesktopTranslateY = 45;
+    const initialDesktopTranslateX = -45; // -35 - 10
+    const initialDesktopRotate = 7; // 10 - 3
+
+    // Se estiver no carregamento inicial, usar valores baseados no estado inicial desejado
     if (initialLoad) {
       return {
         opacity: 0.5,
-        transform: `translateX(-40%) rotate(15deg) scale(0.1) translateY(65px)`,
+        transform: `translateX(${initialDesktopTranslateX}%) rotate(${initialDesktopRotate}deg) scale(${initialDesktopScale}) translateY(${initialDesktopTranslateY}px)`,
         transition: "none",
-        boxShadow: "none", // Garantindo que não tenha sombra
+        boxShadow: "none",
       };
     }
 
-    // Opacidade alta para melhor visualização
     const opacity = isInView ? 0.9 + scrollProgress * 0.1 : 0.7;
-
-    let scale;
-    let translateY;
-    let translateX;
-    let rotate;
+    let scale, translateY, translateX, rotate;
 
     if (screenSize === "xs") {
-      // Telas muito pequenas (smartphones)
       scale = 0.1 + scrollProgress * 0.63;
       translateY = 45 - scrollProgress * 40;
       translateX = -32 - scrollProgress * 10;
       rotate = 10 - scrollProgress * 4;
     } else if (screenSize === "sm") {
-      // Telas pequenas
       scale = 0.15 + scrollProgress * 0.55;
       translateY = 55 - scrollProgress * 50;
       translateX = -45 - scrollProgress * 10;
       rotate = 12 - scrollProgress * 5;
     } else if (screenSize === "md") {
-      // Tablet
       scale = 0.2 + scrollProgress * 0.6;
       translateY = 65 - scrollProgress * 55;
       translateX = -40 - scrollProgress * 10;
       rotate = 12 - scrollProgress * 4;
     } else {
-      // Desktop
-      scale = 0.25 + scrollProgress * 0.65;
-      translateY = 75 - scrollProgress * 60;
-      translateX = -35 - scrollProgress * 10;
-      rotate = 10 - scrollProgress * 3;
+      // Desktop - Ajustado para iniciar maior e mais alto
+      scale = initialDesktopScale + scrollProgress * 0.45; // Começa em 0.45, vai até 0.9
+      translateY = initialDesktopTranslateY - scrollProgress * 30; // Começa em 45, vai até 15
+      translateX = initialDesktopTranslateX - scrollProgress * 10; // Começa em -45, vai até -55
+      rotate = initialDesktopRotate - scrollProgress * 3; // Começa em 7, vai até 4
     }
 
     return {
@@ -271,7 +269,7 @@ const MockupDisplay: React.FC<MockupDisplayProps> = ({
       transform: `translateX(${translateX}%) rotate(${rotate}deg) scale(${scale}) translateY(${translateY}px)`,
       transition:
         "opacity 0.3s ease-out, transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1)",
-      boxShadow: "none", // Garantindo que não tenha sombra
+      boxShadow: "none",
     };
   };
 

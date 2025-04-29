@@ -30,7 +30,7 @@ export const heroSectionStyles: Record<string, CSSProperties> = {
   },
 
   heroTitle: {
-    fontSize: typography.fontSizes["3xl"],
+    fontSize: "3.3rem",
     fontWeight: typography.fontWeights.bold,
     textAlign: "center",
     maxWidth: "48rem",
@@ -153,7 +153,7 @@ export const heroSectionStyles: Record<string, CSSProperties> = {
 export const heroSectionMediaStyles = {
   sm: {
     heroTitle: {
-      fontSize: typography.fontSizes["4xl"],
+      fontSize: "3.5rem",
     },
     heroActions: {
       flexDirection: "row" as const,
@@ -171,7 +171,7 @@ export const heroSectionMediaStyles = {
       paddingTop: "calc(70px + " + spacing["4xl"] + ")",
     },
     heroTitle: {
-      fontSize: typography.fontSizes["5xl"],
+      fontSize: "4.2rem",
       maxWidth: "56rem",
     },
     heroDescription: {
@@ -181,7 +181,7 @@ export const heroSectionMediaStyles = {
   },
   lg: {
     heroTitle: {
-      fontSize: "4.5rem", // Tamanho maior para desktop
+      fontSize: "7.5rem",
       letterSpacing: "-0.03em",
     },
     heroDescription: {

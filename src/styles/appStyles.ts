@@ -21,6 +21,9 @@ export const colors = {
 export const typography = {
   fontFamily:
     "'Geist', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+  titleFontFamily: "'Anton', sans-serif",
+  serifFontFamily: "'Playfair Display', Georgia, serif",
+  italicFontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif",
   fontSizes: {
     xs: "0.75rem",
     sm: "0.875rem",

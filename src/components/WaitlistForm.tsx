@@ -7,6 +7,7 @@ import { mergeStyles } from "../styles/utils";
 import { useResponsiveStyles } from "../hooks/useResponsiveStyles";
 import Button from "./Button";
 import { addToWaitlist } from "../services/waitlistService";
+import { useTranslation } from "react-i18next";
 
 type SubmissionStatus = "idle" | "loading" | "success" | "error";
 
@@ -17,6 +18,7 @@ interface WaitlistFormProps {
 const WaitlistForm: React.FC<WaitlistFormProps> = ({
   disableAnimations = false,
 }) => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<SubmissionStatus>("idle");
   const [message, setMessage] = useState("");
@@ -52,7 +54,9 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setStatus("error");
-      setMessage("Por favor, insira um email válido.");
+      setMessage(
+        t("waitlist.invalidEmail", "Por favor, insira um email válido.")
+      );
       return;
     }
 
@@ -72,7 +76,10 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({
       }
     } catch (error) {
       setStatus("error");
-      const errorMessage = "Algo deu errado. Por favor, tente novamente.";
+      const errorMessage = t(
+        "waitlist.error",
+        "Algo deu errado. Por favor, tente novamente."
+      );
 
       if (error instanceof Error) {
         console.error("Detalhes do erro:", error.message);
@@ -135,7 +142,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    minWidth: "140px",
+    width: "100%",
   };
 
   return (
@@ -146,7 +153,10 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({
           disableAnimations ? "" : "animate-fadeInUp animate-delay-100"
         }
       >
-        Quer testar o FitFolio antes do lançamento oficial?
+        {t(
+          "waitlist.title",
+          "Quer testar o FitFolio antes do lançamento oficial?"
+        )}
       </h3>
       <p
         style={waitlistFormDescriptionStyle}
@@ -154,7 +164,10 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({
           disableAnimations ? "" : "animate-fadeInUp animate-delay-200"
         }
       >
-        Entre para o teste beta, enivaremos o link para você.
+        {t(
+          "waitlist.description",
+          "Entre para o teste beta, enviaremos o link para você."
+        )}
       </p>
 
       <form
@@ -166,7 +179,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({
       >
         <input
           type="email"
-          placeholder="Seu endereço de email"
+          placeholder={t("waitlist.emailPlaceholder", "Seu endereço de email")}
           style={getInputStyle()}
           value={email}
           onChange={handleEmailChange}
@@ -191,11 +204,16 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({
             isLoading={status === "loading"}
             disabled={status === "loading"}
             ariaLabel={
-              status === "loading" ? "Enviando..." : "Entrar na lista de espera"
+              status === "loading"
+                ? t("waitlist.sending", "Enviando...")
+                : t("waitlist.join", "Entrar na lista de espera")
             }
             size="md"
+            fullWidth={true}
           >
-            {status === "loading" ? "Enviando..." : "Entrar"}
+            {status === "loading"
+              ? t("waitlist.sending", "Enviando...")
+              : t("waitlist.joinButton", "Entrar")}
           </Button>
         </div>
       </form>

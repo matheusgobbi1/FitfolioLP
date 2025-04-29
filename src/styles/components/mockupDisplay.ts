@@ -89,7 +89,7 @@ export const mockupDisplayMediaStyles = {
       padding: "60px 0",
     },
     mockup: {
-      width: "320px",
+      width: "400px",
       borderRadius: "24px",
     },
   },

@@ -1,0 +1,111 @@
+{
+  "navbar": {
+    "home": "Home",
+    "features": "Features",
+    "howItWorks": "How It Works",
+    "about": "Suggestion",
+    "contact": "About"
+  },
+  "hero": {
+    "title": "Fitfolio helps you",
+    "subtitle": "Track every workout, monitor your diet, maintain consistency and see real results.",
+    "ctaButton": "Join"
+  },
+  "valueProposition": {
+    "title": "Transform your body with the power of data",
+    "description": "Fitfolio offers all the tools you need to achieve your fitness goals.",
+    "feature1": {
+      "title": "Personalized Diet",
+      "description": "Receive a personalized meal plan based on your profile, goals and preferences."
+    },
+    "feature2": {
+      "title": "Custom Workouts",
+      "description": "Create and track your workouts, monitoring the progression of load and volume over time."
+    },
+    "feature3": {
+      "title": "Progress Analysis",
+      "description": "Visualize your progress with detailed diet and workout charts to stay motivated."
+    }
+  },
+  "waitlist": {
+    "title": "Want to test FitFolio before the official launch?",
+    "description": "Join the beta test, we'll send you the link.",
+    "emailPlaceholder": "Your email address",
+    "sending": "Sending...",
+    "joinButton": "Join",
+    "join": "Join the waitlist",
+    "invalidEmail": "Please enter a valid email.",
+    "error": "Something went wrong. Please try again."
+  },
+  "howItWorks": {
+    "title": "How It Works",
+    "steps": [
+      {
+        "title": "Answer a short questionnaire"
+      },
+      {
+        "title": "Receive your personalized plan"
+      },
+      {
+        "title": "Organize your meals"
+      },
+      {
+        "title": "See nutritional information for each food"
+      },
+      {
+        "title": "Change your diet settings whenever you want"
+      },
+      {
+        "title": "Create your personalized workouts"
+      },
+      {
+        "title": "Explore a large exercise database"
+      },
+      {
+        "title": "Record your weights, sets and reps"
+      },
+      {
+        "title": "Track your progress"
+      },
+      {
+        "title": "Analyze your results"
+      }
+    ]
+  },
+  "cta": {
+    "title": "Help build Fitfolio",
+    "description": "We want everyone to live healthy and fit lives. We'd like you to tell us what we can do to help you achieve your goals.",
+    "button": "Send suggestion",
+    "modal": {
+      "title": "Help build Fitfolio",
+      "email": "Your email:",
+      "suggestion": "Your suggestion:",
+      "placeholder": "Tell us what we can build to help you achieve your goals...",
+      "button": "Submit suggestion",
+      "success": "Thank you for your suggestion!",
+      "successMessage": "Your contribution is very important to us."
+    }
+  },
+  "footer": {
+    "description": "Track every workout, monitor your diet and macros, maintain consistency and see real results. Transform your journey to a healthier life with Fitfolio.",
+    "newsletter": {
+      "title": "Join the beta test",
+      "description": "Test Fitfolio before the official launch.",
+      "placeholder": "Your best email",
+      "button": "Subscribe",
+      "loading": "Sending...",
+      "success": "Thank you for subscribing! You'll receive our updates."
+    },
+    "nav": {
+      "features": "Features",
+      "contact": "Contact",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Use"
+    },
+    "copyright": "© 2024 Fitfolio. All rights reserved.",
+    "backToTop": "Back to top"
+  },
+  "languageSelector": {
+    "language": "Language"
+  }
+} 

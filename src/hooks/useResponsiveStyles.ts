@@ -1,59 +1,36 @@
-import { useState, useEffect, CSSProperties } from 'react';
-import { mergeStyles, breakpoints } from '../styles/utils';
+import { CSSProperties, useMemo } from "react";
+import { mergeStyles, breakpoints, useMediaQuery } from "../styles/utils";
 
-// Hook para obter estilos responsivos
+// Hook para obter estilos responsivos sem useState e useEffect
 export const useResponsiveStyles = (
   baseStyles: Record<string, CSSProperties>,
   mediaStyles: Record<string, Record<string, CSSProperties>> = {},
   styleName: string
 ): CSSProperties => {
-  const [responsiveStyle, setResponsiveStyle] = useState<CSSProperties>(baseStyles[styleName] || {});
+  // Verificar se cada breakpoint está ativo usando o hook useMediaQuery
+  const isSmScreen = useMediaQuery(breakpoints.sm);
+  const isMdScreen = useMediaQuery(breakpoints.md);
+  const isLgScreen = useMediaQuery(breakpoints.lg);
 
-  useEffect(() => {
-    // Função para atualizar os estilos com base nas media queries
-    const updateStyles = () => {
-      let newStyle = { ...baseStyles[styleName] };
+  // Calcular os estilos responsivos usando useMemo para evitar recálculos desnecessários
+  const responsiveStyle = useMemo(() => {
+    let newStyle = { ...baseStyles[styleName] };
 
-      // Aplicar estilos para cada breakpoint ativo
-      if (window.matchMedia(breakpoints.sm).matches && 
-          mediaStyles.sm && 
-          mediaStyles.sm[styleName]) {
-        newStyle = mergeStyles(newStyle, mediaStyles.sm[styleName]);
-      }
-      
-      if (window.matchMedia(breakpoints.md).matches && 
-          mediaStyles.md && 
-          mediaStyles.md[styleName]) {
-        newStyle = mergeStyles(newStyle, mediaStyles.md[styleName]);
-      }
-      
-      if (window.matchMedia(breakpoints.lg).matches && 
-          mediaStyles.lg && 
-          mediaStyles.lg[styleName]) {
-        newStyle = mergeStyles(newStyle, mediaStyles.lg[styleName]);
-      }
+    // Aplicar estilos para cada breakpoint ativo
+    if (isSmScreen && mediaStyles.sm && mediaStyles.sm[styleName]) {
+      newStyle = mergeStyles(newStyle, mediaStyles.sm[styleName]);
+    }
 
-      setResponsiveStyle(newStyle);
-    };
+    if (isMdScreen && mediaStyles.md && mediaStyles.md[styleName]) {
+      newStyle = mergeStyles(newStyle, mediaStyles.md[styleName]);
+    }
 
-    // Atualizar estilos inicialmente
-    updateStyles();
+    if (isLgScreen && mediaStyles.lg && mediaStyles.lg[styleName]) {
+      newStyle = mergeStyles(newStyle, mediaStyles.lg[styleName]);
+    }
 
-    // Configurar listeners para mudanças de tamanho de tela
-    const mediaQueryLists = Object.values(breakpoints).map(query => window.matchMedia(query));
-    const listeners = mediaQueryLists.map(mql => {
-      const listener = () => updateStyles();
-      mql.addEventListener('change', listener);
-      return { mql, listener };
-    });
-
-    // Limpar listeners quando o componente for desmontado
-    return () => {
-      listeners.forEach(({ mql, listener }) => {
-        mql.removeEventListener('change', listener);
-      });
-    };
-  }, [baseStyles, mediaStyles, styleName]);
+    return newStyle;
+  }, [baseStyles, mediaStyles, styleName, isSmScreen, isMdScreen, isLgScreen]);
 
   return responsiveStyle;
-}; 
+};

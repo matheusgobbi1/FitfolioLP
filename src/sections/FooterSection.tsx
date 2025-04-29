@@ -6,12 +6,14 @@ import footerSectionStyles, {
 } from "../styles/sections/footerSection";
 import { mergeStyles } from "../styles/utils";
 import { useResponsiveStyles } from "../hooks/useResponsiveStyles";
-import { colors } from "../styles/appStyles";
+import { colors, typography } from "../styles/appStyles";
 import { addToWaitlist } from "../services/waitlistService";
+import { useTranslation } from "react-i18next";
 
 type NewsletterStatus = "idle" | "loading" | "success" | "error";
 
 const FooterSection: React.FC = () => {
+  const { t } = useTranslation();
   const [hoverStates, setHoverStates] = useState({
     instagram: false,
     tiktok: false,
@@ -170,9 +172,7 @@ const FooterSection: React.FC = () => {
       if (result.success) {
         setNewsletterStatus("success");
         setEmail("");
-        setStatusMessage(
-          "Obrigado por se inscrever! Você receberá nossas novidades."
-        );
+        setStatusMessage(t("footer.newsletter.success"));
         setTimeout(() => {
           setNewsletterStatus("idle");
         }, 3000);
@@ -278,7 +278,7 @@ const FooterSection: React.FC = () => {
         onClick={scrollToTop}
         onMouseEnter={() => setBackToTopHovered(true)}
         onMouseLeave={() => setBackToTopHovered(false)}
-        aria-label="Voltar ao topo"
+        aria-label={t("footer.backToTop")}
         role="button"
         tabIndex={0}
         onKeyDown={(e) => {
@@ -291,29 +291,35 @@ const FooterSection: React.FC = () => {
       </div>
 
       <div style={animatedContentStyle}>
-        <h1 style={animatedTitleStyle}>
+        <h1
+          style={{
+            ...animatedTitleStyle,
+            fontFamily: typography.serifFontFamily,
+            fontWeight: typography.fontWeights.bold,
+            letterSpacing: "0.03em",
+            fontSize: "2rem",
+          }}
+        >
           FITFOLIO
           <span style={footerSectionStyles.footerTitleUnderline} />
         </h1>
 
-        <p style={footerSectionStyles.footerText}>
-          Acompanhe cada treino, monitore sua dieta e seus macros, mantenha a
-          consistência e veja resultados reais. Transforme sua jornada para uma
-          vida mais saudável com o Fitfolio.
-        </p>
+        <p style={footerSectionStyles.footerText}>{t("footer.description")}</p>
 
         {/* Formulário de Newsletter */}
         <div style={footerSectionStyles.newsletterContainer}>
-          <h3 style={footerSectionStyles.newsletterTitle}>Entre para o teste beta</h3>
+          <h3 style={footerSectionStyles.newsletterTitle}>
+            {t("footer.newsletter.title")}
+          </h3>
           <p style={footerSectionStyles.newsletterText}>
-            Teste o FitFolio antes do lançamento oficial.
+            {t("footer.newsletter.description")}
           </p>
 
           <form style={newsletterFormStyle} onSubmit={handleSubscribe}>
             <input
               ref={emailInputRef}
               type="email"
-              placeholder="Seu melhor e-mail"
+              placeholder={t("footer.newsletter.placeholder")}
               required
               value={email}
               onChange={handleEmailChange}
@@ -330,7 +336,9 @@ const FooterSection: React.FC = () => {
               onMouseLeave={() => setButtonHovered(false)}
               disabled={newsletterStatus === "loading"}
             >
-              {newsletterStatus === "loading" ? "Enviando..." : "Inscrever-se"}
+              {newsletterStatus === "loading"
+                ? t("footer.newsletter.loading")
+                : t("footer.newsletter.button")}
               {newsletterStatus !== "loading" && (
                 <ChevronRight size={16} style={{ marginLeft: "4px" }} />
               )}
@@ -383,18 +391,22 @@ const FooterSection: React.FC = () => {
         <div style={animatedBottomStyle}>
           <nav style={footerSectionStyles.footerNav}>
             {[
-              { name: "Recursos", href: "#recursos", id: "recursos" },
               {
-                name: "Contato",
+                name: t("footer.nav.features"),
+                href: "#recursos",
+                id: "recursos",
+              },
+              {
+                name: t("footer.nav.contact"),
                 href: "mailto:fitfolio.app.br@gmail.com",
                 id: "contato",
               },
               {
-                name: "Política de Privacidade",
+                name: t("footer.nav.privacy"),
                 href: "#privacidade",
                 id: "privacidade",
               },
-              { name: "Termos de Uso", href: "#termos", id: "termos" },
+              { name: t("footer.nav.terms"), href: "#termos", id: "termos" },
             ].map((item) => (
               <a
                 key={item.id}
@@ -411,7 +423,7 @@ const FooterSection: React.FC = () => {
           </nav>
 
           <p style={footerSectionStyles.footerCopyright}>
-            © {currentYear} Fitfolio. Todos os direitos reservados.
+            {t("footer.copyright").replace("2024", currentYear.toString())}
           </p>
         </div>
       </div>
