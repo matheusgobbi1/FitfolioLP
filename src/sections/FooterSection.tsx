@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 import { Instagram, ChevronRight, ArrowUp, Mail } from "lucide-react";
 import { FaTiktok } from "react-icons/fa";
 import footerSectionStyles, {
@@ -9,36 +9,40 @@ import { useResponsiveStyles } from "../hooks/useResponsiveStyles";
 import { colors, typography } from "../styles/appStyles";
 import { addToWaitlist } from "../services/waitlistService";
 import { useTranslation } from "react-i18next";
+import PrivacyPolicyModal from "../components/PrivacyPolicyModal";
+import { useInView } from "react-intersection-observer";
 
 type NewsletterStatus = "idle" | "loading" | "success" | "error";
 
 const FooterSection: React.FC = () => {
   const { t } = useTranslation();
-  const [hoverStates, setHoverStates] = useState({
+  const [hoverStates, setHoverStates] = React.useState({
     instagram: false,
     tiktok: false,
     gmail: false,
   });
 
-  const [navLinkHoverStates, setNavLinkHoverStates] = useState({
+  const [navLinkHoverStates, setNavLinkHoverStates] = React.useState({
     recursos: false,
     contato: false,
     privacidade: false,
     termos: false,
   });
 
-  const [inputFocused, setInputFocused] = useState(false);
-  const [email, setEmail] = useState("");
-  const [isVisible, setIsVisible] = useState(false);
-  const [newsletterStatus, setNewsletterStatus] =
-    useState<NewsletterStatus>("idle");
-  const [statusMessage, setStatusMessage] = useState("");
-  const [buttonHovered, setButtonHovered] = useState(false);
-  const [backToTopHovered, setBackToTopHovered] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [inputFocused, setInputFocused] = React.useState(false);
+  const [email, setEmail] = React.useState("");
+  const [newsletterStatus, setNewsletterStatus] = React.useState<NewsletterStatus>("idle");
+  const [statusMessage, setStatusMessage] = React.useState("");
+  const [buttonHovered, setButtonHovered] = React.useState(false);
+  const [backToTopHovered, setBackToTopHovered] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState("");
+  const [showPrivacyPolicy, setShowPrivacyPolicy] = React.useState(false);
 
-  const footerRef = useRef<HTMLElement>(null);
-  const emailInputRef = useRef<HTMLInputElement>(null);
+  const emailInputRef = React.useRef<HTMLInputElement>(null);
+  const { ref: footerRef, inView } = useInView({
+    threshold: 0.1,
+    triggerOnce: true,
+  });
 
   const footerStyle = useResponsiveStyles(
     footerSectionStyles,
@@ -55,27 +59,6 @@ const FooterSection: React.FC = () => {
     footerSectionMediaStyles,
     "newsletterForm"
   );
-
-  // Efeito para detectar quando o footer entra na viewport
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (footerRef.current) {
-      observer.observe(footerRef.current);
-    }
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
 
   const handleMouseEnter = (social: keyof typeof hoverStates) => {
     setHoverStates((prev) => ({ ...prev, [social]: true }));
@@ -211,6 +194,10 @@ const FooterSection: React.FC = () => {
     });
   };
 
+  const closePrivacyPolicy = () => {
+    setShowPrivacyPolicy(false);
+  };
+
   const backToTopStyle = mergeStyles(
     footerSectionStyles.backToTopButton,
     backToTopHovered ? footerSectionStyles.backToTopButtonHover : {}
@@ -227,7 +214,7 @@ const FooterSection: React.FC = () => {
   const animatedTitleStyle = mergeStyles(
     footerSectionStyles.footerTitle,
     footerSectionStyles.footerTitleAnimated,
-    isVisible
+    inView
       ? { opacity: 1, transform: "translateY(0)" }
       : { opacity: 0, transform: "translateY(20px)" }
   );
@@ -235,7 +222,7 @@ const FooterSection: React.FC = () => {
   const animatedContentStyle = mergeStyles(
     footerSectionStyles.footerContent,
     footerSectionStyles.footerContentAnimated,
-    isVisible
+    inView
       ? { opacity: 1, transform: "translateY(0)" }
       : { opacity: 0, transform: "translateY(20px)" }
   );
@@ -243,7 +230,7 @@ const FooterSection: React.FC = () => {
   const animatedBottomStyle = mergeStyles(
     footerBottomStyle,
     footerSectionStyles.footerBottomAnimated,
-    isVisible
+    inView
       ? { opacity: 1, transform: "translateY(0)" }
       : { opacity: 0, transform: "translateY(20px)" }
   );
@@ -258,6 +245,12 @@ const FooterSection: React.FC = () => {
 
   return (
     <footer style={animatedFooterStyle} ref={footerRef}>
+      {/* Modal de Política de Privacidade */}
+      <PrivacyPolicyModal 
+        isOpen={showPrivacyPolicy} 
+        onClose={closePrivacyPolicy} 
+      />
+
       {/* Elementos decorativos */}
       <div
         style={mergeStyles(
@@ -403,7 +396,7 @@ const FooterSection: React.FC = () => {
               },
               {
                 name: t("footer.nav.privacy"),
-                href: "#privacidade",
+                href: "/privacy-policy.html",
                 id: "privacidade",
               },
               { name: t("footer.nav.terms"), href: "#termos", id: "termos" },
@@ -416,6 +409,8 @@ const FooterSection: React.FC = () => {
                 )}
                 onMouseEnter={() => handleNavLinkMouseEnter(item.id)}
                 onMouseLeave={() => handleNavLinkMouseLeave(item.id)}
+                target={item.id === "privacidade" ? "_blank" : undefined}
+                rel={item.id === "privacidade" ? "noopener noreferrer" : undefined}
               >
                 {item.name}
               </a>
