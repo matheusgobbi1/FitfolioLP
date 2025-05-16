@@ -1,0 +1,82 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Função auxiliar para verificar campos específicos
+    function isOnboardingStatusOnly() {
+      return request.resource.data.keys().hasOnly(['onboardingCompleted']);
+    }
+
+    // Permite operações que estavam em andamento antes do logout concluir
+    function isValidOperation() {
+      return request.auth != null ||
+        (request.resource != null && request.resource.data.size() > 0 && request.method == "update");
+    }
+
+    // Regra para permitir que usuários autenticados acessem apenas seus próprios dados
+    match /users/{userId} {
+      // Permitir leitura do status de onboarding para o próprio usuário
+      allow read: if request.auth != null && request.auth.uid == userId;
+      // Manter as regras de escrita restritas, mas permitir finalização de operações em andamento
+      allow write: if (request.auth != null && request.auth.uid == userId) || 
+                     (resource != null && resource.data.userId == userId && isValidOperation());
+      
+      // Permitir leitura pública de informações básicas para o ranking
+      match /gameData/fitpoints {
+        allow read: if request.auth != null; // Qualquer usuário autenticado pode ler para o ranking
+        allow write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // Regra explícita para customMeals
+      match /customMeals/{mealId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // Regra explícita para meals
+      match /meals/{date} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // Regra para outras subcoleções
+      match /{subcollection}/{document} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+    
+    // Regra para permitir que usuários autenticados acessem dados de nutrição
+    match /nutrition/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Regra para permitir que usuários autenticados acessem dados de treino
+    match /workouts/{workoutId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      // Permitir atualizações de dados que já estavam sendo enviados durante o logout
+      allow update: if (request.auth != null && resource.data.userId == request.auth.uid) || 
+                      (resource != null && resource.data.userId != null && request.method == "update");
+      allow delete: if request.auth != null && resource.data.userId == request.auth.uid;
+    }
+    
+    // Regra para permitir que qualquer pessoa adicione emails à lista de espera
+    match /waitlist/{document} {
+      allow read: if request.auth != null; // Apenas usuários autenticados podem ler
+      allow create: if true; // Qualquer pessoa pode adicionar um email
+    }
+    
+    // Regra para permitir que qualquer pessoa adicione sugestões
+    match /suggestions/{document} {
+      allow read: if request.auth != null; // Apenas usuários autenticados podem ler
+      allow create: if true; // Qualquer pessoa pode adicionar uma sugestão
+    }
+    
+    // NOVA REGRA: Permitir que qualquer pessoa registre-se para o evento FITFOLIO RUN
+    match /eventRegistrations/{document} {
+      allow read, write: if true; // Qualquer pessoa pode ler e escrever (registro e verificação)
+    }
+    
+    // Regra padrão - negar acesso a todos os documentos
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+} 

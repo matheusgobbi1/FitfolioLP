@@ -1,4 +1,4 @@
-import { CSSProperties, useEffect, useState } from "react";
+import { CSSProperties } from "react";
 import { useSyncExternalStore } from "react";
 
 // Função para mesclar estilos

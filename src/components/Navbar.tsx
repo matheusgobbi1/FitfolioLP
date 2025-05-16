@@ -8,6 +8,7 @@ import { useNavbarVisibility } from "../hooks/useNavbarVisibility";
 import { typography, colors, spacing } from "../styles/appStyles";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Navbar: React.FC = () => {
   // Estados principais
@@ -24,6 +25,9 @@ const Navbar: React.FC = () => {
   });
 
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isHomePage = location.pathname === "/";
 
   // Usar hook customizado para controlar visibilidade da navbar
   const { isScrolled, isHidden, isMobile } =
@@ -79,20 +83,38 @@ const Navbar: React.FC = () => {
     setIsMobileMenuOpen(false);
     document.body.style.overflow = "";
 
-    // Mapeamento para direcionar para as seções corretas
-    const linkToSectionMap: Record<string, string> = {
-      sugestao: "sobre",
-      como: "como-funciona",
-    };
+    // Se estiver na página inicial, rola até a seção
+    if (isHomePage) {
+      // Mapeamento para direcionar para as seções corretas
+      const linkToSectionMap: Record<string, string> = {
+        sugestao: "sobre",
+        como: "como-funciona",
+      };
 
-    // Verificar se há um mapeamento especial para este link
-    const targetSection = linkToSectionMap[link] || link;
+      // Verificar se há um mapeamento especial para este link
+      const targetSection = linkToSectionMap[link] || link;
 
-    // Scroll suave para a seção correspondente
-    const element = document.getElementById(targetSection);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      // Scroll suave para a seção correspondente
+      const element = document.getElementById(targetSection);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      // Se estiver em outra página, navega para a home e adiciona o hash
+      const linkToSectionMap: Record<string, string> = {
+        sugestao: "sobre",
+        como: "como-funciona",
+      };
+      const targetSection = linkToSectionMap[link] || link;
+      navigate(`/#${targetSection}`);
     }
+  };
+
+  // Navegar para a página inicial
+  const navigateToHome = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate("/");
+    setActiveLink("home");
   };
 
   // Obter o estilo do link
@@ -211,9 +233,9 @@ const Navbar: React.FC = () => {
       {/* Logo flutuante apenas no desktop */}
       {!isMobile && (
         <a
-          href="#home"
+          href="/"
           style={navbarLogoStyle}
-          onClick={() => handleLinkClick("home")}
+          onClick={navigateToHome}
         >
           <LogoComponent />
         </a>
@@ -227,8 +249,8 @@ const Navbar: React.FC = () => {
         {/* Logo para mobile (incorporada na navbar) */}
         {isMobile && (
           <a
-            href="#home"
-            onClick={() => handleLinkClick("home")}
+            href="/"
+            onClick={navigateToHome}
             style={{ display: "flex", alignItems: "center" }}
           >
             <LogoComponent />
@@ -239,51 +261,86 @@ const Navbar: React.FC = () => {
         {!isMobile && (
           <div style={navbarFloatingLinksContainerStyle}>
             <a
-              href="#home"
+              href={isHomePage ? "#home" : "/"}
               style={getLinkStyle("home")}
               onMouseEnter={() => handleMouseEnter("home")}
               onMouseLeave={() => handleMouseLeave("home")}
-              onClick={() => handleLinkClick("home")}
+              onClick={(e) => {
+                e.preventDefault();
+                if (!isHomePage) {
+                  navigate("/");
+                } else {
+                  handleLinkClick("home");
+                }
+              }}
             >
               {t("navbar.home")}
             </a>
 
             <a
-              href="#recursos"
+              href={isHomePage ? "#recursos" : "/#recursos"}
               style={getLinkStyle("recursos")}
               onMouseEnter={() => handleMouseEnter("recursos")}
               onMouseLeave={() => handleMouseLeave("recursos")}
-              onClick={() => handleLinkClick("recursos")}
+              onClick={(e) => {
+                e.preventDefault();
+                if (!isHomePage) {
+                  navigate("/#recursos");
+                } else {
+                  handleLinkClick("recursos");
+                }
+              }}
             >
               {t("navbar.features")}
             </a>
 
             <a
-              href="#como-funciona"
+              href={isHomePage ? "#como-funciona" : "/#como-funciona"}
               style={getLinkStyle("como")}
               onMouseEnter={() => handleMouseEnter("como")}
               onMouseLeave={() => handleMouseLeave("como")}
-              onClick={() => handleLinkClick("como")}
+              onClick={(e) => {
+                e.preventDefault();
+                if (!isHomePage) {
+                  navigate("/#como-funciona");
+                } else {
+                  handleLinkClick("como");
+                }
+              }}
             >
               {t("navbar.howItWorks")}
             </a>
 
             <a
-              href="#sobre"
+              href={isHomePage ? "#sobre" : "/#sobre"}
               style={getLinkStyle("sugestao")}
               onMouseEnter={() => handleMouseEnter("sugestao")}
               onMouseLeave={() => handleMouseLeave("sugestao")}
-              onClick={() => handleLinkClick("sugestao")}
+              onClick={(e) => {
+                e.preventDefault();
+                if (!isHomePage) {
+                  navigate("/#sobre");
+                } else {
+                  handleLinkClick("sugestao");
+                }
+              }}
             >
               {t("navbar.about")}
             </a>
 
             <a
-              href="#cta"
+              href={isHomePage ? "#cta" : "/#cta"}
               style={getLinkStyle("sobre")}
               onMouseEnter={() => handleMouseEnter("sobre")}
               onMouseLeave={() => handleMouseLeave("sobre")}
-              onClick={() => handleLinkClick("sobre")}
+              onClick={(e) => {
+                e.preventDefault();
+                if (!isHomePage) {
+                  navigate("/#cta");
+                } else {
+                  handleLinkClick("sobre");
+                }
+              }}
             >
               {t("navbar.contact")}
             </a>
@@ -292,7 +349,13 @@ const Navbar: React.FC = () => {
               style={getCTAStyle()}
               onMouseEnter={() => handleMouseEnter("cta")}
               onMouseLeave={() => handleMouseLeave("cta")}
-              onClick={() => handleLinkClick("cta")}
+              onClick={() => {
+                if (!isHomePage) {
+                  navigate("/#cta");
+                } else {
+                  handleLinkClick("cta");
+                }
+              }}
             >
               {t("hero.ctaButton")}
             </button>
@@ -380,41 +443,76 @@ const Navbar: React.FC = () => {
           }}
         >
           <a
-            href="#home"
+            href={isHomePage ? "#home" : "/"}
             style={getMobileLinkStyle("home")}
-            onClick={() => handleLinkClick("home")}
+            onClick={(e) => {
+              e.preventDefault();
+              if (!isHomePage) {
+                navigate("/");
+              } else {
+                handleLinkClick("home");
+              }
+            }}
           >
             {t("navbar.home")}
           </a>
 
           <a
-            href="#recursos"
+            href={isHomePage ? "#recursos" : "/#recursos"}
             style={getMobileLinkStyle("recursos")}
-            onClick={() => handleLinkClick("recursos")}
+            onClick={(e) => {
+              e.preventDefault();
+              if (!isHomePage) {
+                navigate("/#recursos");
+              } else {
+                handleLinkClick("recursos");
+              }
+            }}
           >
             {t("navbar.features")}
           </a>
 
           <a
-            href="#como-funciona"
+            href={isHomePage ? "#como-funciona" : "/#como-funciona"}
             style={getMobileLinkStyle("como")}
-            onClick={() => handleLinkClick("como")}
+            onClick={(e) => {
+              e.preventDefault();
+              if (!isHomePage) {
+                navigate("/#como-funciona");
+              } else {
+                handleLinkClick("como");
+              }
+            }}
           >
             {t("navbar.howItWorks")}
           </a>
 
           <a
-            href="#sobre"
+            href={isHomePage ? "#sobre" : "/#sobre"}
             style={getMobileLinkStyle("sugestao")}
-            onClick={() => handleLinkClick("sugestao")}
+            onClick={(e) => {
+              e.preventDefault();
+              if (!isHomePage) {
+                navigate("/#sobre");
+              } else {
+                handleLinkClick("sugestao");
+              }
+            }}
           >
             {t("navbar.about")}
           </a>
 
           <a
-            href="#cta"
+            href={isHomePage ? "#cta" : "/#cta"}
             style={getMobileLinkStyle("sobre")}
-            onClick={() => handleLinkClick("sobre")}
+            onClick={(e) => {
+              e.preventDefault();
+              if (!isHomePage) {
+                navigate("/#cta");
+              } else {
+                handleLinkClick("sobre");
+              }
+            }}
           >
             {t("navbar.contact")}
           </a>
@@ -447,7 +545,13 @@ const Navbar: React.FC = () => {
             }}
             onMouseEnter={() => handleMouseEnter("mobileCta")}
             onMouseLeave={() => handleMouseLeave("mobileCta")}
-            onClick={() => handleLinkClick("cta")}
+            onClick={() => {
+              if (!isHomePage) {
+                navigate("/#cta");
+              } else {
+                handleLinkClick("cta");
+              }
+            }}
           >
             {t("hero.ctaButton")} <ChevronRight size={16} />
           </button>

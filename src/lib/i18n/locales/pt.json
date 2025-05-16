@@ -8,7 +8,7 @@
   },
   "hero": {
     "title": "Fitfolio te ajuda a",
-    "subtitle": "Acompanhe cada treino, monitore sua dieta, mantenha a consistência e veja resultados reais. De graça.",
+    "subtitle": "A ferramenta definitiva para acompanhar sua rotina de exercícios, nutrição e bem-estar. De graça.",
     "ctaButton": "Começar"
   },
   "valueProposition": {
@@ -31,11 +31,12 @@
     "title": "Quer testar o FitFolio antes do lançamento oficial?",
     "description": "Entre para o teste beta, enviaremos o link para você.",
     "emailPlaceholder": "Seu endereço de email",
+    "invalidEmail": "Por favor, insira um email válido",
+    "error": "Algo deu errado. Por favor, tente novamente.",
+    "success": "Obrigado! Você está na lista de espera.",
     "sending": "Enviando...",
-    "joinButton": "Entrar",
     "join": "Entrar na lista de espera",
-    "invalidEmail": "Por favor, insira um email válido.",
-    "error": "Algo deu errado. Por favor, tente novamente."
+    "joinButton": "Entrar"
   },
   "howItWorks": {
     "title": "Como Funciona",
@@ -107,5 +108,44 @@
   },
   "languageSelector": {
     "language": "Idioma"
+  },
+  "event": {
+    "title": "FITFOLIO RUN",
+    "description": "Participe da nossa corrida exclusiva, ganhe uma camiseta personalizada e faça parte da comunidade FITFOLIO",
+    "steps": {
+      "personal": "Informações Pessoais",
+      "contact": "Informações de Contato",
+      "details": "Detalhes do Evento",
+      "confirmation": "formações"
+    },
+    "form": {
+      "name": "Nome Completo",
+      "email": "Email",
+      "phone": "Telefone",
+      "shirtSize": "Tamanho da Camiseta"
+    },
+    "errors": {
+      "nameRequired": "Nome é obrigatório",
+      "emailRequired": "Email é obrigatório",
+      "emailInvalid": "Email inválido",
+      "phoneRequired": "Telefone é obrigatório",
+      "phoneInvalid": "Telefone inválido"
+    },
+    "buttons": {
+      "next": "Próximo",
+      "back": "Voltar",
+      "review": "Revisar",
+      "confirm": "Confirmar",
+      "backToHome": "Voltar para o Início"
+    },
+    "review": {
+      "personal": "Dados Pessoais"
+    },
+    "payment": {
+      "info": "Valor do Evento",
+      "details": "Após confirmar, você será direcionado para o pagamento via PIX",
+      "title": "Pagamento via PIX",
+      "scan": "Escaneie o QR Code abaixo para efetuar o pagamento de R$ 60,00"
+    }
   }
 } 

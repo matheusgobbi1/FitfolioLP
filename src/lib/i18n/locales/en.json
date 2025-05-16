@@ -8,7 +8,7 @@
   },
   "hero": {
     "title": "Fitfolio helps you",
-    "subtitle": "Track every workout, monitor your diet, maintain consistency and see real results.",
+    "subtitle": "The ultimate tool for tracking your exercise routine, nutrition, and wellness.",
     "ctaButton": "Join"
   },
   "valueProposition": {
@@ -31,11 +31,12 @@
     "title": "Want to test FitFolio before the official launch?",
     "description": "Join the beta test, we'll send you the link.",
     "emailPlaceholder": "Your email address",
+    "invalidEmail": "Please enter a valid email address",
+    "error": "Something went wrong. Please try again.",
+    "success": "Thank you! You're on the waitlist.",
     "sending": "Sending...",
-    "joinButton": "Join",
     "join": "Join the waitlist",
-    "invalidEmail": "Please enter a valid email.",
-    "error": "Something went wrong. Please try again."
+    "joinButton": "Join"
   },
   "howItWorks": {
     "title": "How It Works",
@@ -107,5 +108,44 @@
   },
   "languageSelector": {
     "language": "Language"
+  },
+  "event": {
+    "title": "FITFOLIO RUN",
+    "description": "Join our exclusive running event, get a personalized t-shirt, and become part of the FITFOLIO community",
+    "steps": {
+      "personal": "Personal Information",
+      "contact": "Contact Information",
+      "details": "Event Details",
+      "confirmation": "Confirm Information"
+    },
+    "form": {
+      "name": "Full Name",
+      "email": "Email",
+      "phone": "Phone",
+      "shirtSize": "T-shirt Size"
+    },
+    "errors": {
+      "nameRequired": "Name is required",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Invalid email",
+      "phoneRequired": "Phone is required",
+      "phoneInvalid": "Invalid phone number"
+    },
+    "buttons": {
+      "next": "Next",
+      "back": "Back",
+      "review": "Review",
+      "confirm": "Confirm Registration",
+      "backToHome": "Back to Home"
+    },
+    "review": {
+      "personal": "Personal Data"
+    },
+    "payment": {
+      "info": "Event Price",
+      "details": "After confirming, you will be directed to payment via PIX",
+      "title": "Payment via PIX",
+      "scan": "Scan the QR Code below to make the payment of R$ 60.00"
+    }
   }
 } 

@@ -1,15 +1,16 @@
 import React, { useReducer, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import heroSectionStyles, {
   heroSectionMediaStyles,
 } from "../styles/sections/heroSection";
 import { useResponsiveStyles } from "../hooks/useResponsiveStyles";
-import WaitlistForm from "../components/WaitlistForm";
 import MockupDisplay from "../components/MockupDisplay";
 import { ChevronDown } from "lucide-react";
 import mockup1Image from "../assets/images/mockup1.png";
 import mockup2Image from "../assets/images/mockup2.png";
 import { useTranslation } from "react-i18next";
 import { typography, colors } from "../styles/appStyles";
+import Button from "../components/Button";
 
 // Componente para as partículas de fundo
 const ParticlesBackground: React.FC = React.memo(() => {
@@ -165,7 +166,8 @@ const HeroSection: React.FC = () => {
   const heroRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const textRotationIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
+  const navigate = useNavigate();
 
   // Verificar se o i18n está inicializado
   React.useEffect(() => {
@@ -227,11 +229,7 @@ const HeroSection: React.FC = () => {
     textTransform: "uppercase" as const,
     letterSpacing: "0.01em",
   };
-  const heroDescriptionStyle = useResponsiveStyles(
-    heroSectionStyles,
-    heroSectionMediaStyles,
-    "heroDescription"
-  );
+  // Removido heroDescriptionStyle pois não está mais sendo usado
   const scrollIndicatorStyle = useResponsiveStyles(
     heroSectionStyles,
     heroSectionMediaStyles,
@@ -354,6 +352,11 @@ const HeroSection: React.FC = () => {
     }
   }, []);
 
+  // Função para navegar para a página de inscrição do evento
+  const navigateToEventRegistration = useCallback(() => {
+    navigate("/evento-fitfolio-run");
+  }, [navigate]);
+
   // Estilos para o conteúdo com transição suave
   const contentTransitionStyle = {
     ...heroContentStyle,
@@ -473,15 +476,20 @@ const HeroSection: React.FC = () => {
     transitionDelay: state.animationsApplied ? "0" : "0.5s",
   };
 
+  // Estilos para o componente épico do evento foram movidos diretamente para o JSX
+
   return (
-    <section style={heroSectionStyle} ref={heroRef}>
+    <section style={{
+      ...heroSectionStyle,
+      paddingTop: "calc(70px + 2rem)", // Reduzindo o padding top para elevar o conteúdo
+    }} ref={heroRef}>
       <FloatingAnimation />
       <div ref={contentRef} style={contentTransitionStyle}>
         <h1 style={heroTitleStyle}>
           <span style={mainTitleTextStyle}>
             {actualLanguage === "en"
               ? "Fitfolio helps you"
-              : "Fitfolio te ajuda a"}
+              : "Fitfolio te ajuda"}
           </span>
           <span style={rotatingBlockStyle}>
             <span style={highlightContainerStyle}>
@@ -495,32 +503,187 @@ const HeroSection: React.FC = () => {
           </span>
         </h1>
 
-        <p
-          style={{
-            ...heroDescriptionStyle,
-            opacity: state.animationsApplied ? 1 : 0,
-            transform: state.animationsApplied
-              ? "translateY(0)"
-              : "translateY(20px)",
-            transition: "opacity 0.8s ease-out, transform 0.8s ease-out",
-            transitionDelay: "0.3s",
-          }}
-        >
-          {t("hero.subtitle")}
-        </p>
-
+        {/* Componente épico para o evento Fitfolio Run */}
         <div
           style={{
+            width: "100%",
+            maxWidth: "650px",
+            margin: "1rem auto", // Reduzindo margens
+            position: "relative",
             opacity: state.animationsApplied ? 1 : 0,
-            transform: state.animationsApplied
-              ? "translateY(0)"
-              : "translateY(20px)",
-            transition: "opacity 0.8s ease-out, transform 0.8s ease-out",
+            transform: state.animationsApplied ? "translateY(0)" : "translateY(30px)",
+            transition: "opacity 1.2s ease-out, transform 1.2s ease-out",
             transitionDelay: "0.4s",
           }}
         >
-          <WaitlistForm disableAnimations={true} />
+          {/* Fundo com gradiente animado */}
+          <div
+            style={{
+              background: "linear-gradient(-45deg, #111, #222, #333, #222)",
+              backgroundSize: "400% 400%",
+              animation: "gradientBG 15s ease infinite",
+              borderRadius: "1rem",
+              padding: "0.25rem",
+              boxShadow: "0 20px 40px rgba(0, 0, 0, 0.25)",
+              overflow: "hidden",
+              position: "relative",
+            }}
+          >
+            {/* Conteúdo do card com fundo escuro */}
+            <div
+              style={{
+                background: "rgba(28, 28, 30, 0.95)",
+                borderRadius: "0.8rem",
+                padding: "1.5rem", // Reduzindo padding
+                position: "relative",
+                overflow: "hidden",
+                backdropFilter: "blur(10px)",
+              }}
+            >
+              {/* Título do evento com efeito de texto */}
+              <div style={{ textAlign: "center", marginBottom: "1rem" }}>
+                <h2
+                  style={{
+                    margin: 0,
+                    fontSize: state.isMobile ? "2.2rem" : "3rem",
+                    fontWeight: 800,
+                    letterSpacing: "-0.03em",
+                    color: "#fff",
+                    textTransform: "uppercase",
+                    position: "relative",
+                  }}
+                >
+                  <span style={{ color: "#fff" }}>Fitfolio</span> Run
+                </h2>
+                <div
+                  style={{
+                    margin: "0.5rem auto",
+                    height: "1px",
+                    width: "120px",
+                    background: "linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent)",
+                  }}
+                />
+              </div>
+
+              {/* Elementos de destaque do evento */}
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: state.isMobile ? "column" : "row",
+                  justifyContent: "space-between",
+                  gap: "1rem",
+                  marginBottom: "1rem", // Reduzindo margem
+                }}
+              >
+                {[
+                  { icon: "🏃‍♂️", text: "5KM DE CORRIDA" },
+                  { icon: "👕", text: "KIT EXCLUSIVO" },
+                  { icon: "🏆", text: "PREMIAÇÃO" },
+                ].map((item, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      flex: 1,
+                      background: "linear-gradient(to bottom, rgba(255,255,255,0.1), rgba(255,255,255,0.05))",
+                      borderRadius: "0.8rem",
+                      padding: "0.8rem", // Aumentando padding para acomodar os emojis
+                      textAlign: "center",
+                      transform: state.animationsApplied ? "translateY(0)" : "translateY(20px)",
+                      opacity: state.animationsApplied ? 1 : 0,
+                      transition: "transform 0.8s ease, opacity 0.8s ease",
+                      transitionDelay: `${0.6 + index * 0.1}s`,
+                      border: "1px solid rgba(255,255,255,0.12)",
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                    }}
+                  >
+                    <div style={{ 
+                      marginBottom: "0.5rem",
+                      display: "flex",
+                      justifyContent: "center",
+                      fontSize: "2rem"
+                    }}>
+                      {item.icon}
+                    </div>
+                    <div
+                      style={{
+                        color: "#fff",
+                        fontWeight: 700,
+                        fontSize: "0.85rem",
+                        textShadow: "0 1px 2px rgba(0,0,0,0.3)"
+                      }}
+                    >
+                      {item.text}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Data do evento com efeito de destaque */}
+              <div
+                style={{
+                  background: "rgba(255, 255, 255, 0.1)",
+                  borderRadius: "0.6rem",
+                  padding: "0.8rem",
+                  marginBottom: "1rem", // Reduzindo margem
+                  textAlign: "center",
+                  border: "1px solid rgba(255, 255, 255, 0.2)",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                  }}
+                >
+                  <span style={{ fontSize: "1.2rem", color: "#fff" }}>📅</span>
+                  <p
+                    style={{
+                      margin: 0,
+                      color: "#fff",
+                      fontWeight: 600,
+                      fontSize: "1.1rem",
+                    }}
+                  >
+                    15 de Junho, 2025 • São Paulo • Parque Ibirapuera
+                  </p>
+                </div>
+              </div>
+
+              {/* Botão de inscrição com efeito de destaque */}
+              <div style={{ textAlign: "center" }}>
+                <Button
+                  onClick={navigateToEventRegistration}
+                  size="lg"
+                  fullWidth={true}
+                  customStyle={{
+                    background: "linear-gradient(45deg, #111, #333)",
+                    fontSize: "1.2rem",
+                    fontWeight: "bold",
+                    padding: "1rem 2rem", // Reduzindo padding
+                    boxShadow: "0 10px 25px rgba(0, 0, 0, 0.3)",
+                    borderRadius: "0.8rem",
+                    border: "none",
+                  }}
+                >
+                  INSCREVA-SE AGORA
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
+
+        {/* CSS para animações */}
+        <style>
+          {`
+            @keyframes gradientBG {
+              0% { background-position: 0% 50% }
+              50% { background-position: 100% 50% }
+              100% { background-position: 0% 50% }
+            }
+          `}
+        </style>
 
         <div style={mockupsWithParallaxStyle}>
           <MockupDisplay mockup1Src={mockup1Image} mockup2Src={mockup2Image} />

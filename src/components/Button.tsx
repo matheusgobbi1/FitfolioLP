@@ -15,6 +15,7 @@ interface ButtonProps {
   ariaLabel?: string;
   fullWidth?: boolean;
   size?: 'sm' | 'md' | 'lg';
+  customStyle?: React.CSSProperties;
 }
 
 interface RippleStyle {
@@ -36,6 +37,7 @@ const Button: React.FC<ButtonProps> = ({
   ariaLabel,
   fullWidth = false,
   size = 'md',
+  customStyle,
 }) => {
   const [isHovering, setIsHovering] = useState(false);
   const [ripples, setRipples] = useState<RippleStyle[]>([]);
@@ -49,20 +51,36 @@ const Button: React.FC<ButtonProps> = ({
 
   // Limpar ripples após a animação
   useEffect(() => {
-    const timeoutIds: number[] = [];
+    const timeoutIds: ReturnType<typeof setTimeout>[] = [];
     
-    ripples.forEach((_, i) => {
+    // Criar um timeout para cada ripple sem usar forEach/map
+    if (ripples.length > 0) {
       const timeoutId = setTimeout(() => {
-        setRipples(prevRipples => prevRipples.filter((_, index) => index !== 0));
+        setRipples(prevRipples => prevRipples.slice(1));
       }, 600);
       
       timeoutIds.push(timeoutId);
-    });
+    }
     
     return () => {
       timeoutIds.forEach(id => clearTimeout(id));
     };
   }, [ripples]);
+
+  const mergeStylesWithoutConflict = (baseStyle: React.CSSProperties, additionalStyle?: React.CSSProperties): React.CSSProperties => {
+    if (!additionalStyle) return baseStyle;
+    
+    // Criar uma cópia do estilo base
+    const mergedStyle = { ...baseStyle };
+    
+    // Se o estilo adicional tem 'background' e o base tem 'backgroundColor', removemos o 'backgroundColor'
+    if (additionalStyle.background && mergedStyle.backgroundColor) {
+      delete mergedStyle.backgroundColor;
+    }
+    
+    // Aplicamos o estilo adicional
+    return { ...mergedStyle, ...additionalStyle };
+  };
 
   const getButtonStyle = () => {
     let style = { ...baseButtonStyle };
@@ -78,17 +96,22 @@ const Button: React.FC<ButtonProps> = ({
     }
     
     if (isLoading || disabled) {
-      return mergeStyles(
+      style = mergeStyles(
         style, 
         variant === 'primary' ? buttonStyles.btnPrimaryDisabled : buttonStyles.btnSecondaryDisabled
       );
     }
     
     if (isHovering) {
-      return mergeStyles(
+      style = mergeStyles(
         style, 
         variant === 'primary' ? buttonStyles.btnPrimaryHover : buttonStyles.btnSecondaryHover
       );
+    }
+    
+    // Aplicar estilos personalizados se fornecidos usando o novo método seguro
+    if (customStyle) {
+      style = mergeStylesWithoutConflict(style, customStyle);
     }
     
     return style;
@@ -127,7 +150,7 @@ const Button: React.FC<ButtonProps> = ({
   const optimizedButtonStyle = {
     ...getButtonStyle(),
     willChange: 'transform, box-shadow',
-    backfaceVisibility: 'hidden' as 'hidden',
+    backfaceVisibility: 'hidden' as const,
     WebkitFontSmoothing: 'antialiased',
     MozOsxFontSmoothing: 'grayscale',
   };
@@ -136,7 +159,7 @@ const Button: React.FC<ButtonProps> = ({
   const textStyle = {
     display: 'block',
     width: '100%',
-    textAlign: 'center' as 'center',
+    textAlign: 'center' as const,
     padding: '0 0.25rem',
     willChange: 'transform',
     transform: 'translateZ(0)',

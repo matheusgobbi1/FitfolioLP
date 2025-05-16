@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 
 interface NavbarVisibilityState {
   isScrolled: boolean;
@@ -6,170 +7,79 @@ interface NavbarVisibilityState {
   isMobile: boolean;
 }
 
-// Breakpoint personalizado para o navbar
-const customNavbarBreakpoint = "(min-width: 1300px)";
-
-export const useNavbarVisibility = (
-  isMobileMenuOpen: boolean
-): NavbarVisibilityState => {
+export const useNavbarVisibility = (isMobileMenuOpen: boolean = false): NavbarVisibilityState => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const prevScrollPos = useRef(0);
-  const isHiddenRef = useRef(isHidden); // Ref para guardar o estado isHidden atual
+  const lastScrollY = useRef(0);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const location = useLocation();
 
-  // Efeito para manter a ref sincronizada com o estado
-  useEffect(() => {
-    isHiddenRef.current = isHidden;
-  }, [isHidden]);
+  // Verificar responsividade
+  const checkMobile = () => {
+    setIsMobile(window.innerWidth < 768);
+  };
 
-  // Verificar se está em viewport mobile
-  useEffect(() => {
-    const checkViewport = () => {
-      // Usamos o breakpoint personalizado (1299px) para o navbar
-      setIsMobile(!window.matchMedia(customNavbarBreakpoint).matches);
-    };
+  // Cria um efeito para o resize
+  const handleResize = () => {
+    checkMobile();
+  };
 
-    // Verificar na inicialização
-    checkViewport();
-
-    // Adicionar listener para redimensionamento
-    window.addEventListener("resize", checkViewport);
-
-    // Remover estilos de links padrão que podem causar problema
-    if (typeof document !== "undefined") {
-      const style = document.createElement("style");
-      style.innerHTML = `
-        a, a:hover, a:visited, a:focus {
-          text-decoration: none !important;
-          border: none !important;
-          outline: none !important;
-          box-shadow: none !important;
-        }
-      `;
-      document.head.appendChild(style);
-    }
-
-    return () => {
-      window.removeEventListener("resize", checkViewport);
-    };
-  }, []);
-
-  // Enquanto o menu mobile estiver aberto, forçar isHidden a false
-  useEffect(() => {
-    if (isMobileMenuOpen) {
-      setIsHidden(false);
-    }
-  }, [isMobileMenuOpen]);
-
-  useEffect(() => {
-    const rootElement = document.getElementById("root");
-    if (!rootElement) {
-      console.error(
-        "Elemento #root não encontrado para adicionar listener de scroll."
-      );
-      return;
-    }
-
-    // Inicializar a posição de scroll no elemento root
-    prevScrollPos.current = rootElement.scrollTop;
-
-    // Função que controla a visibilidade da navbar
-    const handleScroll = () => {
-      // Se o menu mobile estiver aberto, não esconder a navbar
+  // Criar um efeito para o scroll
+  const handleScroll = () => {
+    const currentScrollY = window.scrollY;
+    
+    // Verificamos se estamos na página de registro de eventos
+    const isEventPage = location.pathname.includes('evento-fitfolio-run');
+    
+    // Lógica diferente baseada na página atual
+    if (isEventPage) {
+      // Na página do evento, simplesmente mostrar a navbar quando no topo e esconder quando rolar para baixo
+      setIsHidden(currentScrollY > 100);
+      setIsScrolled(currentScrollY > 50);
+    } else {
+      // Na página principal, usar a lógica original
+      if (currentScrollY > 80) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+  
+      // Se menu mobile estiver aberto, sempre mostrar
       if (isMobileMenuOpen) {
         setIsHidden(false);
+        lastScrollY.current = currentScrollY;
         return;
       }
-
-      const currentScrollPos = rootElement.scrollTop;
-      const scrollDelta = Math.abs(currentScrollPos - prevScrollPos.current);
-      const isScrollingDown = currentScrollPos > prevScrollPos.current;
-      const currentIsHidden = isHiddenRef.current; // Ler o valor atual da ref
-
-      // Log detalhado do estado atual do scroll
-      console.log(
-        `[useNavbarVisibility] Scroll Info: current=${currentScrollPos}, prev=${prevScrollPos.current}, delta=${scrollDelta}, down=${isScrollingDown}, isHidden=${currentIsHidden}, isMobile=${isMobile}`
-      );
-
-      // Determina o próximo estado de visibilidade
-      let nextIsHidden = currentIsHidden; // Começa com o estado atual da ref
-
-      if (isMobile) {
-        if (isScrollingDown && currentScrollPos > 50) {
-          nextIsHidden = true; // Esconder ao rolar para baixo (mobile)
-        } else if (!isScrollingDown && scrollDelta > 5) {
-          nextIsHidden = false; // Mostrar ao rolar para cima (mobile)
-        }
-      } else {
-        // Desktop
-        if (isScrollingDown && currentScrollPos > 100) {
-          nextIsHidden = true; // Esconder ao rolar para baixo (desktop)
-        } else if (!isScrollingDown && scrollDelta > 10) {
-          nextIsHidden = false; // Mostrar ao rolar para cima (desktop)
-        }
+  
+      // Esconder quando rolar para baixo, mostrar quando rolar para cima
+      if (currentScrollY > lastScrollY.current + 10) {
+        setIsHidden(true);
+      } else if (currentScrollY < lastScrollY.current - 10) {
+        setIsHidden(false);
       }
+    }
+    
+    lastScrollY.current = currentScrollY;
+  };
 
-      // Lógica para manter visível se o menu mobile estiver aberto (sobrescreve a decisão anterior)
-      if (isMobileMenuOpen && nextIsHidden) {
-        console.log(
-          "[useNavbarVisibility] Overriding HIDE decision because mobile menu is open."
-        );
-        nextIsHidden = false;
-      }
+  // Configurar e limpar event listeners
+  useEffect(() => {
+    checkMobile();
+    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("resize", handleResize);
 
-      // Aplica a mudança de estado apenas se necessário
-      if (nextIsHidden !== currentIsHidden) {
-        // Comparar com o valor da ref
-        console.log(
-          `[useNavbarVisibility] State Change: isHidden changing from ${currentIsHidden} to ${nextIsHidden}`
-        );
-        setIsHidden(nextIsHidden);
-      } else {
-        console.log(
-          `[useNavbarVisibility] State No Change: isHidden remains ${currentIsHidden}`
-        );
-      }
-
-      // Atualiza a posição anterior do scroll para a próxima iteração
-      // Apenas atualiza se a mudança não for muito grande (evita problemas com saltos)
-      if (scrollDelta < 200) {
-        prevScrollPos.current = currentScrollPos;
-      } else {
-        console.log(
-          `[useNavbarVisibility] Large scroll delta (${scrollDelta}), not updating prevScrollPos immediately.`
-        );
-      }
-
-      // Atualiza o estado isScrolled (pode ser útil para outros estilos)
-      setIsScrolled(currentScrollPos > 50);
-    };
-
-    // Usar requestAnimationFrame para melhor performance
-    let ticking = false;
-
-    const scrollHandler = () => {
-      console.log("[useNavbarVisibility] Scroll event detected!");
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          handleScroll();
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    // Adicionar o listener de scroll ao elemento #root
-    rootElement.addEventListener("scroll", scrollHandler, { passive: true });
-
-    // Configurar estado inicial
-    handleScroll();
-
-    // Limpar listener ao desmontar
     return () => {
-      rootElement.removeEventListener("scroll", scrollHandler);
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
     };
-  }, [isMobileMenuOpen, isMobile]);
+  }, [isMobileMenuOpen, location.pathname]);
+
+  // Reset da visibilidade quando a localização muda
+  useEffect(() => {
+    setIsHidden(false);
+    setIsScrolled(false);
+    lastScrollY.current = 0;
+  }, [location.pathname]);
 
   return { isScrolled, isHidden, isMobile };
 };
